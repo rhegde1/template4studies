@@ -4,6 +4,7 @@
 	"parameters": {
 		"adminUsername": {
 			"type": "string",
+			"defaultValue": "azadmin"
 			"metadata": {
 				"description": "Username for the Virtual Machine."
 			}
@@ -56,7 +57,7 @@
 		"nicName": "myVMNic",
 		"addressPrefix": "10.0.0.0/16",
 		"subnetName": "Subnet",
-		"subnetPrefix": "10.0.0.0/24",
+		"subnetPrefix": "10.1.0.0/24",
 		"publicIPAddressName": "myPublicIP",
 		"vmName": "SimpleWinVM",
 		"virtualNetworkName": "MyVNET",
@@ -86,26 +87,48 @@
 				}
 			}
 		},
+
 		{
-			"comments": "Default Network Security Group for template",
 			"type": "Microsoft.Network/networkSecurityGroups",
-			"apiVersion": "2019-08-01",
-			"name": "[variables('networkSecurityGroupName')]",
-			"location": "[parameters('location')]",
+			"apiVersion": "2019-11-01",
+			"name": "[parameters('networkSecurityGroups_default_NSG_name')]",
+			"location": "eastasia",
 			"properties": {
 				"securityRules": [{
-					"name": "default-allow-3389",
-					"properties": {
-						"priority": 1000,
-						"access": "Allow",
-						"direction": "Inbound",
-						"destinationPortRange": "3389",
-						"protocol": "Tcp",
-						"sourcePortRange": "*",
-						"sourceAddressPrefix": "*",
-						"destinationAddressPrefix": "*",
+						"name": "default-allow-3389",
+						"properties": {
+							"protocol": "Tcp",
+							"sourcePortRange": "*",
+							"destinationPortRange": "3389",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1000,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
+					},
+					{
+						"name": "Port_8080",
+						"properties": {
+							"protocol": "*",
+							"sourcePortRange": "*",
+							"destinationPortRange": "80",
+							"sourceAddressPrefix": "*",
+							"destinationAddressPrefix": "*",
+							"access": "Allow",
+							"priority": 1010,
+							"direction": "Inbound",
+							"sourcePortRanges": [],
+							"destinationPortRanges": [],
+							"sourceAddressPrefixes": [],
+							"destinationAddressPrefixes": []
+						}
 					}
-				}]
+				]
 			}
 		},
 		{
@@ -186,7 +209,7 @@
 						"createOption": "FromImage"
 					},
 					"dataDisks": [{
-						"diskSizeGB": 1023,
+						"diskSizeGB": 250,
 						"lun": 0,
 						"createOption": "Empty"
 					}]
